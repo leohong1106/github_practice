@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <title>welcome to car list page^_^</title>
+    <script src='https://code.jquery.com/jquery-3.3.1.js'></script>
+    <style>
+        body {
+            background-size: cover;
+            background-repeat: no-repeat;
+            /* opacity: 0.7 !important; */
+        }
+        #lo{
+            background-color: yellowgreen
+        }
+    </style>
+    <script>
+
+        function searchByCarNum() {
+            let searchText = $('#searchtext1').val();
+            let $target = $('#list');
+
+            $.ajax({
+                type: 'POST',
+                url: 'api/search',
+                datatype: 'json',
+                data: { "searchText": searchText },
+                /////////////////////////////// 서버로 ~~
+                success: function (item) {
+                    console.log('success');
+                    console.log(item);
+
+                    //target upadate
+
+                    $target.empty();
+
+
+                    $target.append(`
+                   <tr>
+                       <td>1</td>
+                       <td>${item.carNumber}</td>
+                       <td>${item.owner}</td>
+                       <td>${item.model}</td>
+                       <td>${item.company}</td>
+                       <td>${item.numOfAccident}</td>
+                       <td>${item.numOfOwnerChange}</td>
+                   </tr>
+                   `);
+                }
+            });
+
+        };
+
+
+        function searchByCompany() {
+            let searchText = $('#searchtext2').val();
+            let $target = $('#list');
+
+            $.ajax({
+                type: 'POST',
+                url: 'api/search2',
+                datatype: 'json',
+                data: { "searchText": searchText },
+
+                success: function (list) {
+                    console.log('success');
+                    console.log(list);
+
+                    //target upadate
+
+                    $target.empty();
+                    $.each(list, function (i, item) {
+
+                        $target.append(`
+                   <tr>
+                       <td>${i + 1}</td>
+                       <td>${item.carNumber}</td>
+                       <td>${item.owner}</td>
+                       <td>${item.model}</td>
+                       <td>${item.company}</td>
+                       <td>${item.numOfAccident}</td>
+                       <td>${item.numOfOwnerChange}</td>
+                   </tr>
+                   `);
+                    })
+                }
+            });
+
+        };
+
+    </script>
+</head>
+
+<body style="background-image:url('background_image1.jpg');">
+    <% include ./inc/navbar.ejs %>
+    <p>Car list2</p>
+    <p><%= user.userid %>님 안녕하세요 &nbsp&nbsp
+        <!-- <a id="lo" type="button" href="/logout">로그아웃</a> -->
+    </p>
+    <hr>
+    검색 기능을 구현합니다.
+    <div class="input-group mb-3">
+        <input type="text" id="searchtext1" class="form-control" placeholder="차량번호">
+        <div class="input-group-append">
+            <button class="btn btn-success" onclick="searchByCarNum();" type="submit">검색</button>
+        </div>
+    </div>
+    <div class="input-group mb-3">
+        <input type="text" id="searchtext2" class="form-control" placeholder="제조사">
+        <div class="input-group-append">
+            <button class="btn btn-success" onclick="searchByCompany();" type="submit">검색</button>
+        </div>
+    </div>
+    <hr>
+    <table id="list">
+        <tr>
+            <th>No</th>
+            <th>CarNumber</th>
+            <th>Owner</th>
+            <th>Model</th>
+            <th>Company</th>
+            <th>NumOfAccident</th>
+            <th>NumOfOwnerChange</th>
+        </tr>
+        <% for( let i=0; i<carlist.length; i++) { %>
+        <tr>
+            <td><%= i %></td>
+            <td><%= carlist[i].carNumber %></td>
+            <td><%= carlist[i].owner %></td>
+            <td><%= carlist[i].model %></td>
+            <td><%= carlist[i].company %></td>
+            <td><%= carlist[i].numOfAccident %></td>
+            <td><%= carlist[i].numOfOwnerChange %></td>
+        </tr>
+
+        <% } %>
+
+
+    </table>
+
+
+</body>
+
+</html>
